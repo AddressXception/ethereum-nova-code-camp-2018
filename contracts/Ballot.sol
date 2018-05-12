@@ -1,7 +1,7 @@
 pragma solidity ^0.4.0;
 
 /**
-* @Dev this code taken from remix.ethereum.org: https://remix.ethereum.org/#optimize=false&version=soljson-v0.4.23+commit.124ca40d.js
+ * this code taken from remix.ethereum.org: https://remix.ethereum.org/#optimize=false&version=soljson-v0.4.23+commit.124ca40d.js
  */
 contract Ballot {
 
@@ -20,7 +20,7 @@ contract Ballot {
     Proposal[] proposals;
 
     /// Create a new ballot with $(_numProposals) different proposals.
-    function Ballot(uint8 _numProposals) public payable {
+    constructor(uint8 _numProposals) public payable {
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
         proposals.length = _numProposals;
@@ -56,7 +56,7 @@ contract Ballot {
         sender.voted = true;
         sender.vote = toProposal;
         proposals[toProposal].voteCount += sender.weight;
-        VoteCast(toProposal, msg.sender);
+        emit VoteCast(toProposal, msg.sender);
     }
 
     function winningProposal() public constant returns (uint8 _winningProposal) {
@@ -73,7 +73,7 @@ contract Ballot {
     event Destroyed(address sender, uint amount);
 
    /**
-   * @dev Throws if called by any account other than the owner.
+   * Throws if called by any account other than the owner.
    */
     modifier onlyChairperson() {
         require(msg.sender == chairperson);
@@ -81,10 +81,10 @@ contract Ballot {
     }
 
     /**
-    * @dev Transfers the current balance to the owner and terminates the contract.
+    * Transfers the current balance to the owner and terminates the contract.
     */
     function destroy() onlyChairperson public {
-        Destroyed(msg.sender, this.balance);
+        emit Destroyed(msg.sender, address(this).balance);
         selfdestruct(chairperson);
     }
 }
